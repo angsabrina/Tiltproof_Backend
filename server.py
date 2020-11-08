@@ -25,28 +25,28 @@ tiltedness = [
             ]},
             {"id": 2, "name": "Tilt Level 2", "tiltedness": 2, 'messages':[
               "Alright champ, looks like you are slaying it. Odds are, you aren't tilted at all - in fact you are probably feeling great! Remember to drink at least 8 cups of water a day to make sure your organs are healthy so you can keep stomping!",
-              "Everybody dies, some just need a little help. Seems like you just had a little bit of bad luck! Give your hands & wrists a break (and avoid carpal tunnel) so your reflexes can be faster next time!"
+              "Everybody dies, some just need a little help. Seems like you just had a little bit of bad luck! Give your hands & wrists a break (and avoid carpal tunnel) so your reflexes can be faster next time!",
               "Sometimes a shark takes the bait, and sinks the whole ship. Looks like you might've hooked a loss, but shake it off and reel in a win next time! Walk a lap around your room to prep!",
               "Master yourself, master the enemy. Seems like you've got that down! Look away from your screen to give your eyes a break, don't wanna become blind like Lee Sin! "
             ]},
             {"id": 3, "name": "Tilt Level 3", "tiltedness": 3, 'messages':[
               "Let's take a breather. There's no need to queue up again right away. Try burning away some of that frustration by doing 30 minutes of exercise - it will help clear your mind and help you win your next few games!",
-              "So you had a couple rough games. Maybe even encountered some rough in-game bugs. Try talking a short walk outside to get some sunlight and see friendly bugs instead!"
-              "Rules were made to be broken. Like buildings. Or people! Seems like the tilt is starting to get to you. Take a break and listen to some calming music!"
+              "So you had a couple rough games. Maybe even encountered some rough in-game bugs. Try talking a short walk outside to get some sunlight and see friendly bugs instead!",
+              "Rules were made to be broken. Like buildings. Or people! Seems like the tilt is starting to get to you. Take a break and listen to some calming music!",
               "ok...like Rammus you are just rolling along, with a few unsavory bumps. Drink tons of water and eat enough to keep you fueled for a win!"
             ]},
             {"id": 4, "name": "Tilt Level 4", "tiltedness": 4, 'messages':[
               "Looks like you aren't having a great time. We predict that you are PRETTY tilted. Let's take a step away and take out some of that frustration doing some pushups.",
               "You're not invited to Tibber's tea party . . . or the winning party either. The tilt is evident, considering taking a break and catch up with friends",
               "FEEDING TIME! Like Fizz, you might be jumping in too much! Hunger never helps either, eat a snack to refuel that mana!",
-              "Gems are truly, truly, truly outrageous. Especially tilted ones! Get your shine back by taking a shower to freshen up and wake up those muscles!"
+              "Gems are truly, truly, truly outrageous. Especially tilted ones! Get your shine back by taking a shower to freshen up and wake up those muscles!",
               "1, 2, 3, 4! While 4 is a beautiful number, 4 is not the level of tilt you want to be at! Give your eyes a break so you don't miss your shots!"
             ]},
             {"id": 5, "name": "Tilt Level 5", "tiltedness": 5, 'messages':[
               "STOP. You are mega tilted. We predict that you are not about to have a fun time if you queue up again. Consider walking away from the game and doing some exercise to burn off some steam.",
               "Hmm, fortune doesn't favor fools (or the tilted). Today might not be your day, but you'll get 'em next time! Take the rest of the day off and come back to the rift tomorrow!",
               "Ally, enemy, I don't care. . ., they're all tilted! You're tilted so much you can't even be an ally to your own team. Take time off the rift for some much needed sleep",
-              "I wonder what the ducks are plotting today. . . be like Ivern and go enjoy some nature! You're tilt is too high for your games to be productive, so take a long break!"
+              "I wonder what the ducks are plotting today. . . be like Ivern and go enjoy some nature! Your tilt is too high for your games to be productive, so take a long break!"
               ]},
             ]
 
@@ -412,29 +412,81 @@ def graph_get_history(summoner):
 
 def graph_kda(df):
     try:
-      kda = ggplot(df) + aes(x='games_ago', y='kda') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + ylim(0,30) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('KDA') + ggtitle("KDA Over the Last 5 Games")
+        lm = LinearRegression()
+        X = df['games_ago']
+        y = df['kda']
+        X = X.values.reshape(-1, 1)
+        y = y.values.reshape(-1, 1)
+        lm.fit(X,y)
+        coef = np.transpose(lm.coef_)
+        if coef[0] < 0:
+            lm_color = 'green'
+        elif coef[0] > 0:
+            lm_color = 'red'
+        else:
+            lm_color = 'black'        
+        kda = ggplot(df) + aes(x='games_ago', y='kda') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + ylim(0,30) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('KDA') + ggtitle("KDA Over the Last 5 Games")
     except:
-      pass
+        pass
     return kda
 
 def graph_tddtc(df):
-    tddtc = ggplot(df) + aes(x='games_ago', y='TotalDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Total Damage Dealt To Champions \n Per Minute') + ggtitle("Total Damage Dealt To Champions Per Minute \n Over the Last 5 Games")
+    lm = LinearRegression()
+    X = df['games_ago']
+    y = df['TotalDamageDealtToChampionsPerMinute']
+    X = X.values.reshape(-1, 1)
+    y = y.values.reshape(-1, 1)
+    lm.fit(X,y)
+    coef = np.transpose(lm.coef_)
+     if coef[0] < 0:
+        lm_color = 'green'
+    elif coef[0] > 0:
+          lm_color = 'red'
+    else:
+        lm_color = 'black'     
+    tddtc = ggplot(df) + aes(x='games_ago', y='TotalDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Total Damage Dealt To Champions \n Per Minute') + ggtitle("Total Damage Dealt To Champions Per Minute \n Over the Last 5 Games")
     return tddtc
 
 # def graph_mddtc(df):
-#     mddtc = ggplot(df) + aes(x='games_ago', y='MagicDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Magic Damage Dealt To Champions \n Per Minute') + ggtitle("Magic Damage Dealt To Champions Per Minute \n Over the Last 5 Games")   
+#     mddtc = ggplot(df) + aes(x='games_ago', y='MagicDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Magic Damage Dealt To Champions \n Per Minute') + ggtitle("Magic Damage Dealt To Champions Per Minute \n Over the Last 5 Games")   
 #     return mddtc
 
 # def graph_pddtc(df):
-#     pddtc = ggplot(df) + aes(x='games_ago', y='PhysicalDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Physical Damage Dealt To Champions \n Per Minute') + ggtitle("Physical Damage Dealt To Champions Per Minute \n Over the Last 5 Games")
+#     pddtc = ggplot(df) + aes(x='games_ago', y='PhysicalDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Physical Damage Dealt To Champions \n Per Minute') + ggtitle("Physical Damage Dealt To Champions Per Minute \n Over the Last 5 Games")
 #     return pddtc
 
 def graph_gepm(df):
-    gepm = ggplot(df) + aes(x='games_ago', y='goldEarnedPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Gold Earned Per Minute') + ggtitle("Gold Earned Per Minute \n Over the Last 5 Games")
+    lm = LinearRegression()
+    X = df['games_ago']
+    y = df['goldEarnedPerMinute']
+    X = X.values.reshape(-1, 1)
+    y = y.values.reshape(-1, 1)
+    lm.fit(X,y)
+    coef = np.transpose(lm.coef_)
+     if coef[0] < 0:
+        lm_color = 'green'
+    elif coef[0] > 0:
+          lm_color = 'red'
+    else:
+        lm_color = 'black'  
+    gepm = ggplot(df) + aes(x='games_ago', y='goldEarnedPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Gold Earned Per Minute') + ggtitle("Gold Earned Per Minute \n Over the Last 5 Games")
     return gepm
 
 def graph_tmk(df):
-    tmk = ggplot(df) + aes(x='games_ago', y='totalMinionsKilledPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Total Minions Killed \n Per Minute') + ggtitle("Total Minions Killed Per Minute \n Over the Last 5 Games")
+    lm = LinearRegression()
+    X = df['games_ago']
+    y = df['totalMinionsKilledPerMinute']
+    X = X.values.reshape(-1, 1)
+    y = y.values.reshape(-1, 1)
+    lm.fit(X,y)
+    coef = np.transpose(lm.coef_)
+     if coef[0] < 0:
+        lm_color = 'green'
+    elif coef[0] > 0:
+          lm_color = 'red'
+    else:
+        lm_color = 'black'     
+    tmk = ggplot(df) + aes(x='games_ago', y='totalMinionsKilledPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Total Minions Killed \n Per Minute') + ggtitle("Total Minions Killed Per Minute \n Over the Last 5 Games")
     return tmk
 
 @api.route('/img/<summoner_postfix>')
