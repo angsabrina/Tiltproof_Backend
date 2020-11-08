@@ -400,29 +400,81 @@ def graph_get_history(summoner):
 
 def graph_kda(df):
     try:
-      kda = ggplot(df) + aes(x='games_ago', y='kda') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + ylim(0,30) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('KDA') + ggtitle("KDA Over the Last 5 Games")
+        lm = LinearRegression()
+        X = df['games_ago']
+        y = df['kda']
+        X = X.values.reshape(-1, 1)
+        y = y.values.reshape(-1, 1)
+        lm.fit(X,y)
+        coef = np.transpose(lm.coef_)
+        if coef[0] < 0:
+            lm_color = 'green'
+        elif coef[0] > 0:
+            lm_color = 'red'
+        else:
+            lm_color = 'black'        
+        kda = ggplot(df) + aes(x='games_ago', y='kda') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + ylim(0,30) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('KDA') + ggtitle("KDA Over the Last 5 Games")
     except:
-      pass
+        pass
     return kda
 
 def graph_tddtc(df):
-    tddtc = ggplot(df) + aes(x='games_ago', y='TotalDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Total Damage Dealt To Champions \n Per Minute') + ggtitle("Total Damage Dealt To Champions Per Minute \n Over the Last 5 Games")
+    lm = LinearRegression()
+    X = df['games_ago']
+    y = df['TotalDamageDealtToChampionsPerMinute']
+    X = X.values.reshape(-1, 1)
+    y = y.values.reshape(-1, 1)
+    lm.fit(X,y)
+    coef = np.transpose(lm.coef_)
+     if coef[0] < 0:
+        lm_color = 'green'
+    elif coef[0] > 0:
+          lm_color = 'red'
+    else:
+        lm_color = 'black'     
+    tddtc = ggplot(df) + aes(x='games_ago', y='TotalDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Total Damage Dealt To Champions \n Per Minute') + ggtitle("Total Damage Dealt To Champions Per Minute \n Over the Last 5 Games")
     return tddtc
 
 # def graph_mddtc(df):
-#     mddtc = ggplot(df) + aes(x='games_ago', y='MagicDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Magic Damage Dealt To Champions \n Per Minute') + ggtitle("Magic Damage Dealt To Champions Per Minute \n Over the Last 5 Games")   
+#     mddtc = ggplot(df) + aes(x='games_ago', y='MagicDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Magic Damage Dealt To Champions \n Per Minute') + ggtitle("Magic Damage Dealt To Champions Per Minute \n Over the Last 5 Games")   
 #     return mddtc
 
 # def graph_pddtc(df):
-#     pddtc = ggplot(df) + aes(x='games_ago', y='PhysicalDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Physical Damage Dealt To Champions \n Per Minute') + ggtitle("Physical Damage Dealt To Champions Per Minute \n Over the Last 5 Games")
+#     pddtc = ggplot(df) + aes(x='games_ago', y='PhysicalDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Physical Damage Dealt To Champions \n Per Minute') + ggtitle("Physical Damage Dealt To Champions Per Minute \n Over the Last 5 Games")
 #     return pddtc
 
 def graph_gepm(df):
-    gepm = ggplot(df) + aes(x='games_ago', y='goldEarnedPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Gold Earned Per Minute') + ggtitle("Gold Earned Per Minute \n Over the Last 5 Games")
+    lm = LinearRegression()
+    X = df['games_ago']
+    y = df['goldEarnedPerMinute']
+    X = X.values.reshape(-1, 1)
+    y = y.values.reshape(-1, 1)
+    lm.fit(X,y)
+    coef = np.transpose(lm.coef_)
+     if coef[0] < 0:
+        lm_color = 'green'
+    elif coef[0] > 0:
+          lm_color = 'red'
+    else:
+        lm_color = 'black'  
+    gepm = ggplot(df) + aes(x='games_ago', y='goldEarnedPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Gold Earned Per Minute') + ggtitle("Gold Earned Per Minute \n Over the Last 5 Games")
     return gepm
 
 def graph_tmk(df):
-    tmk = ggplot(df) + aes(x='games_ago', y='totalMinionsKilledPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Total Minions Killed \n Per Minute') + ggtitle("Total Minions Killed Per Minute \n Over the Last 5 Games")
+    lm = LinearRegression()
+    X = df['games_ago']
+    y = df['totalMinionsKilledPerMinute']
+    X = X.values.reshape(-1, 1)
+    y = y.values.reshape(-1, 1)
+    lm.fit(X,y)
+    coef = np.transpose(lm.coef_)
+     if coef[0] < 0:
+        lm_color = 'green'
+    elif coef[0] > 0:
+          lm_color = 'red'
+    else:
+        lm_color = 'black'     
+    tmk = ggplot(df) + aes(x='games_ago', y='totalMinionsKilledPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Total Minions Killed \n Per Minute') + ggtitle("Total Minions Killed Per Minute \n Over the Last 5 Games")
     return tmk
 
 @api.route('/img/<summoner_postfix>')
