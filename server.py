@@ -1,4 +1,5 @@
 from flask import Flask, json
+from flask_cors import CORS, cross_origin
 import random
 import os
 
@@ -13,6 +14,8 @@ tiltedness = [
 tilt = ["1", "2", "3", "4", "5"]
 
 api = Flask(__name__)
+cors = CORS(api)
+api.config['CORS_HEADERS'] = 'Content-Type'
 
 @api.route('/gettilt', methods=['GET'])
 def get_tiltedness():
