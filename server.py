@@ -399,7 +399,7 @@ def graph_tmk(df):
 
 @api.route('/img/<summoner>')
 def send_img(summoner):
-    return send_from_directory('./static/images', f'{summoner}_kda.jpg')
+    return send_from_directory('./static/images', f'{summoner}.jpg') ## need to fix this
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
