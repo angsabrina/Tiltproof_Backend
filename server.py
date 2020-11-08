@@ -30,8 +30,9 @@ api = Flask(__name__)
 cors = CORS(api)
 api.config['CORS_HEADERS'] = 'Content-Type'
 
-@api.route('/gettilt', methods=['GET'])
-def get_tiltedness():
+@api.route('/gettilt/<summoner>', methods=['GET'])
+def get_tiltedness(summoner):
+  print(summoner)
   return random.choice(tilt)
 
 @api.route('/alltilts', methods=['GET'])
