@@ -1,5 +1,6 @@
 from flask import Flask, json
 import random
+import os
 
 tiltedness = [
             {"id": 1, "name": "Tilt Level One", "tiltedness": 1},
@@ -27,4 +28,5 @@ def get_home():
 
 
 if __name__ == '__main__':
-    api.run()
+    port = int(os.environ.get('PORT', 5000))
+    api.run(host='0.0.0.0', port=port)
