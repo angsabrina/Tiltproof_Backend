@@ -38,7 +38,7 @@ tiltedness = [
               "Looks like you aren't having a great time. We predict that you are PRETTY tilted. Let's take a step away and take out some of that frustration doing some pushups.",
               "You're not invited to Tibber's tea party . . . or the winning party either. The tilt is evident, considering taking a break and catch up with friends",
               "FEEDING TIME! Like Fizz, you might be jumping in too much! Hunger never helps either, eat a snack to refuel that mana!",
-              "Gems are truly, truly, truly outrageous. Especially tilted ones! Get your shine back by taking a shower to freshen up and wake up those muscles!"
+              "Gems are truly, truly, truly outrageous. Especially tilted ones! Get your shine back by taking a shower to freshen up and wake up those muscles!",
               "1, 2, 3, 4! While 4 is a beautiful number, 4 is not the level of tilt you want to be at! Give your eyes a break so you don't miss your shots!"
             ]},
             {"id": 5, "name": "Tilt Level 5", "tiltedness": 5, 'messages':[
