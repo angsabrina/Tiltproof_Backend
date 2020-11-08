@@ -1,7 +1,8 @@
-from flask import Flask, json, send_from_directory
+from flask import Flask, json, send_from_directory, after_this_request
 from flask_cors import CORS, cross_origin
 import random
 import os
+import glob
 from os import environ
 
 from riotwatcher import LolWatcher, ApiError
@@ -81,6 +82,17 @@ def get_tiltedness(summoner):
 
   tilt_object['score'] = prediction
   
+  @after_this_request
+  def delete_static_files(response):
+    files = glob.glob('./static/images/*.jpg', recursive=True)
+
+    for f in files:
+      try:
+          os.remove(f)
+      except OSError as e:
+          print("Error: %s : %s" % (f, e.strerror))
+    return response
+
   return tilt_object
 
 @api.route('/alltilts', methods=['GET'])
