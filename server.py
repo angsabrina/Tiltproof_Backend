@@ -24,14 +24,14 @@ tiltedness = [
             ]},
             {"id": 2, "name": "Tilt Level 2", "tiltedness": 2, 'messages':[
               "Alright champ, looks like you are slaying it. Odds are, you aren't tilted at all - in fact you are probably feeling great! Remember to drink at least 8 cups of water a day to make sure your organs are healthy so you can keep stomping!",
-              "Everybody dies, some just need a little help. Seems like you just had a little bit of bad luck! Give your hands & wrists a break (and avoid carpal tunnel) so your reflexes can be faster next time!"
+              "Everybody dies, some just need a little help. Seems like you just had a little bit of bad luck! Give your hands & wrists a break (and avoid carpal tunnel) so your reflexes can be faster next time!",
               "Sometimes a shark takes the bait, and sinks the whole ship. Looks like you might've hooked a loss, but shake it off and reel in a win next time! Walk a lap around your room to prep!",
               "Master yourself, master the enemy. Seems like you've got that down! Look away from your screen to give your eyes a break, don't wanna become blind like Lee Sin! "
             ]},
             {"id": 3, "name": "Tilt Level 3", "tiltedness": 3, 'messages':[
               "Let's take a breather. There's no need to queue up again right away. Try burning away some of that frustration by doing 30 minutes of exercise - it will help clear your mind and help you win your next few games!",
-              "So you had a couple rough games. Maybe even encountered some rough in-game bugs. Try talking a short walk outside to get some sunlight and see friendly bugs instead!"
-              "Rules were made to be broken. Like buildings. Or people! Seems like the tilt is starting to get to you. Take a break and listen to some calming music!"
+              "So you had a couple rough games. Maybe even encountered some rough in-game bugs. Try talking a short walk outside to get some sunlight and see friendly bugs instead!",
+              "Rules were made to be broken. Like buildings. Or people! Seems like the tilt is starting to get to you. Take a break and listen to some calming music!",
               "ok...like Rammus you are just rolling along, with a few unsavory bumps. Drink tons of water and eat enough to keep you fueled for a win!"
             ]},
             {"id": 4, "name": "Tilt Level 4", "tiltedness": 4, 'messages':[
