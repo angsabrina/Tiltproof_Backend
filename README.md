@@ -12,5 +12,6 @@ python server.py
 ## current endpoints
 ```
 /
-/companies
+/gettilt
+/alltilts
 ```
