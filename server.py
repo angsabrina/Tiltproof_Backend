@@ -2,6 +2,7 @@ from flask import Flask, json, send_from_directory, after_this_request
 from flask_cors import CORS, cross_origin
 import random
 import os
+from os import path
 import glob
 from os import environ
 
@@ -51,6 +52,7 @@ tiltedness = [
             ]
 
 tilt = ["1", "2", "3", "4", "5"]
+img_dir = './static/images'
 
 api = Flask(__name__)
 
@@ -64,6 +66,8 @@ api.config['CORS_HEADERS'] = 'Content-Type'
 
 @api.route('/gettilt/<summoner>', methods=['GET'])
 def get_tiltedness(summoner):
+  if not path.exists(img_dir):
+    os.makedirs(img_dir)
   print(summoner)
   prediction = predict(summoner)
   print ('prediction = ', prediction)
@@ -420,11 +424,11 @@ def graph_kda(df):
         lm.fit(X,y)
         coef = np.transpose(lm.coef_)
         if coef[0] < 0:
-            lm_color = 'green'
+          lm_color = 'green'
         elif coef[0] > 0:
-            lm_color = 'red'
+          lm_color = 'red'
         else:
-            lm_color = 'black'        
+          lm_color = 'black'        
         kda = ggplot(df) + aes(x='games_ago', y='kda') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + ylim(0,30) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('KDA') + ggtitle("KDA Over the Last 5 Games")
     except:
         pass
@@ -438,12 +442,12 @@ def graph_tddtc(df):
     y = y.values.reshape(-1, 1)
     lm.fit(X,y)
     coef = np.transpose(lm.coef_)
-     if coef[0] < 0:
-        lm_color = 'green'
+    if coef[0] < 0:
+      lm_color = 'green'
     elif coef[0] > 0:
-          lm_color = 'red'
+      lm_color = 'red'
     else:
-        lm_color = 'black'     
+      lm_color = 'black'     
     tddtc = ggplot(df) + aes(x='games_ago', y='TotalDamageDealtToChampionsPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Total Damage Dealt To Champions \n Per Minute') + ggtitle("Total Damage Dealt To Champions Per Minute \n Over the Last 5 Games")
     return tddtc
 
@@ -463,12 +467,12 @@ def graph_gepm(df):
     y = y.values.reshape(-1, 1)
     lm.fit(X,y)
     coef = np.transpose(lm.coef_)
-     if coef[0] < 0:
-        lm_color = 'green'
+    if coef[0] < 0:
+      lm_color = 'green'
     elif coef[0] > 0:
-          lm_color = 'red'
+      lm_color = 'red'
     else:
-        lm_color = 'black'  
+      lm_color = 'black'  
     gepm = ggplot(df) + aes(x='games_ago', y='goldEarnedPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Gold Earned Per Minute') + ggtitle("Gold Earned Per Minute \n Over the Last 5 Games")
     return gepm
 
@@ -480,12 +484,12 @@ def graph_tmk(df):
     y = y.values.reshape(-1, 1)
     lm.fit(X,y)
     coef = np.transpose(lm.coef_)
-     if coef[0] < 0:
-        lm_color = 'green'
+    if coef[0] < 0:
+      lm_color = 'green'
     elif coef[0] > 0:
-          lm_color = 'red'
+      lm_color = 'red'
     else:
-        lm_color = 'black'     
+      lm_color = 'black'     
     tmk = ggplot(df) + aes(x='games_ago', y='totalMinionsKilledPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm", color = lm_color) + xlab('Games Ago') + ylab('Total Minions Killed \n Per Minute') + ggtitle("Total Minions Killed Per Minute \n Over the Last 5 Games")
     return tmk
 
