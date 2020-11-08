@@ -19,11 +19,21 @@ model_name = 'model.sav'
 loaded_model = pickle.load(open(model_name, 'rb'))
 
 tiltedness = [
-            {"id": 1, "name": "Tilt Level One", "tiltedness": 1},
-            {"id": 2, "name": "Tilt Level Two", "tiltedness": 2},
-            {"id": 3, "name": "Tilt Level Three", "tiltedness": 3},
-            {"id": 4, "name": "Tilt Level Four", "tiltedness": 4},
-            {"id": 5, "name": "Tilt Level Five", "tiltedness": 5},
+            {"id": 1, "name": "Tilt Level One", "tiltedness": 1, 'messages':[
+              "Tilt? What's tilt. Keep climbing and show the world your true inner Challenger <3. Check your posture and make sure you aren't slouching to give yourself that little extra boost! Try doing 10 victory push ups after each game you stomp, champ!"
+            ]},
+            {"id": 2, "name": "Tilt Level Two", "tiltedness": 2, 'messages':[
+              "Alright champ, looks like you are slaying it. Odds are, you aren't tilted at all - in fact you are probably feeling great! Remember to drink at leastt 8 cups of water a day to make sure your organs are healthy so you can keep stomping!"
+            ]},
+            {"id": 3, "name": "Tilt Level Three", "tiltedness": 3, 'messages':[
+              "Let's take a breather. There's no need to queue up again right away. Try burning away some of that frustration by doing 30 minutes of exercise - it will help clear your mind and help you win your next few games!"
+            ]},
+            {"id": 4, "name": "Tilt Level Four", "tiltedness": 4, 'messages':[
+              "Looks like you aren't having a great time. We predict that you are PRETTY tilted. Let's take a step away and take out some of that frustration doing some pushups. "
+            ]},
+            {"id": 5, "name": "Tilt Level Five", "tiltedness": 5, 'messages':[
+              "STOP. You are mega tilted. We predict that you are not about to have a fun time if you queue up again. Consider taking some deep breaths and walking away from the game. Have you been drinking water? Consider doing some exercise to burn off some steam. Today might not be your day, but you'll get 'em next time!"
+            ]},
             ]
 
 tilt = ["1", "2", "3", "4", "5"]
@@ -38,7 +48,21 @@ def get_tiltedness(summoner):
   prediction = predict(summoner)
   print ('prediction = ', prediction)
   
-  return str(prediction[0])
+  tilt_object = None
+  if prediction > 0.8:
+    tilt_object = tiltedness[4]
+  elif prediction > 0.6:
+    tilt_object = tiltedness[3]
+  elif prediction > 0.4:
+    tilt_object = tiltedness[2]
+  elif prediction > 0.2:
+    tilt_object = tiltedness[1]
+  else:
+    tilt_object = tiltedness[0]
+
+  tilt_object['score'] = prediction
+  
+  return tilt_object
 
 @api.route('/alltilts', methods=['GET'])
 def get_alltilts():
@@ -62,11 +86,11 @@ def predict(summoner_name):
   processed_df = postprocess(user_df)
   pred_x = np.array(processed_df)
   
-  prediction = loaded_model.predict(pred_x)
+  prediction = loaded_model.predict_proba(pred_x)
   print('prediction = ', prediction)
   if prediction is None:
     return "Your tilt-score could not be calculated because you haven't played any games yet today!"
-  return prediction
+  return prediction[0][1]
 
 def fix_bools(val_list):
     refactored = []
