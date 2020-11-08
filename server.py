@@ -19,19 +19,19 @@ model_name = 'model.sav'
 loaded_model = pickle.load(open(model_name, 'rb'))
 
 tiltedness = [
-            {"id": 1, "name": "Tilt Level One", "tiltedness": 1, 'messages':[
+            {"id": 1, "name": "Tilt Level 1", "tiltedness": 1, 'messages':[
               "Tilt? What's tilt. Keep climbing and show the world your true inner Challenger <3. Check your posture and make sure you aren't slouching to give yourself that little extra boost! Try doing 10 victory push ups after each game you stomp, champ!"
             ]},
-            {"id": 2, "name": "Tilt Level Two", "tiltedness": 2, 'messages':[
+            {"id": 2, "name": "Tilt Level 2", "tiltedness": 2, 'messages':[
               "Alright champ, looks like you are slaying it. Odds are, you aren't tilted at all - in fact you are probably feeling great! Remember to drink at leastt 8 cups of water a day to make sure your organs are healthy so you can keep stomping!"
             ]},
-            {"id": 3, "name": "Tilt Level Three", "tiltedness": 3, 'messages':[
+            {"id": 3, "name": "Tilt Level 3", "tiltedness": 3, 'messages':[
               "Let's take a breather. There's no need to queue up again right away. Try burning away some of that frustration by doing 30 minutes of exercise - it will help clear your mind and help you win your next few games!"
             ]},
-            {"id": 4, "name": "Tilt Level Four", "tiltedness": 4, 'messages':[
+            {"id": 4, "name": "Tilt Level 4", "tiltedness": 4, 'messages':[
               "Looks like you aren't having a great time. We predict that you are PRETTY tilted. Let's take a step away and take out some of that frustration doing some pushups. "
             ]},
-            {"id": 5, "name": "Tilt Level Five", "tiltedness": 5, 'messages':[
+            {"id": 5, "name": "Tilt Level 5", "tiltedness": 5, 'messages':[
               "STOP. You are mega tilted. We predict that you are not about to have a fun time if you queue up again. Consider taking some deep breaths and walking away from the game. Have you been drinking water? Consider doing some exercise to burn off some steam. Today might not be your day, but you'll get 'em next time!"
             ]},
             ]
@@ -80,6 +80,7 @@ def is_today(time):
     return evaluate == today
 
 def predict(summoner_name):
+  graph_get_history(summoner_name) # begin generating graphs
   player_data = watcher.summoner.by_name(region, summoner_name)
   user_data = get_data(player_data['id'], player_data['accountId'], watcher)
   user_df = pd.DataFrame(user_data)
@@ -90,7 +91,7 @@ def predict(summoner_name):
   print('prediction = ', prediction)
   if prediction is None:
     return "Your tilt-score could not be calculated because you haven't played any games yet today!"
-  return prediction[0][1]
+  return round(prediction[0][1], 2)
 
 def fix_bools(val_list):
     refactored = []
@@ -109,12 +110,10 @@ def fix_bools(val_list):
     return refactored
 
 def postprocess(df):
-    print ("post processing data")
-    # fix labels #
-    hotstreak = df['hotstreak'].tolist()
-    df['hotstreak'] = fix_bools(hotstreak)
-
     # fix win_g1 # 
+    win_g0 = df['win_g0'].tolist()
+    df['win_g0'] = fix_bools(win_g0)
+    
     win_g1 = df['win_g1'].tolist()
     df['win_g1'] = fix_bools(win_g1)
     
@@ -127,41 +126,25 @@ def postprocess(df):
     win_g4 = df['win_g4'].tolist()
     df['win_g4'] = fix_bools(win_g4)
     
-    win_g5 = df['win_g5'].tolist()
-    df['win_g5'] = fix_bools(win_g5)
-        
     return df
 
 def get_data(pid, accountid, watcher):
-  # (pid, accountid, watcher):
-  '''
-  Given player idea, generate a single row of data
-  '''
-  print ("Pulling data for user")
-  region = 'na1'
-  mapping_list = [] # stores all mappings
-  
-
-  try:
+    '''
+    Given player idea, generate a single row of data
+    '''
+    region = 'na1'
+    mapping_list = [] # stores all mappings
+    
     player_info = watcher.league.by_summoner('na1', pid)
     solo_queue_rank_info = [x for x in player_info if x['queueType'] == 'RANKED_SOLO_5x5'][0]  # query 1
 
-    # compute overal character features #
-    win_loss_ratio = float(solo_queue_rank_info['wins']) / solo_queue_rank_info['losses']
-    hotstreak = solo_queue_rank_info['hotStreak']
-
     # compute match features #
     matches = watcher.match.matchlist_by_account(region, accountid)
-    
     mapping = {}
     
-    # overall features #
-    mapping['win_loss_ratio'] = win_loss_ratio
-    mapping['hotstreak'] = hotstreak
 
     for idx, game in enumerate(matches['matches']):
-        idx+=1
-        if idx < 6:
+        if idx < 5:
             if is_today(game['timestamp']):
                 # same day, record this data
                 game_id = game['gameId']
@@ -200,7 +183,9 @@ def get_data(pid, accountid, watcher):
                     cs_per_min_delta_2 = match_features['timeline']['csDiffPerMinDeltas']['10-20']
                 except:
                     cs_per_min_delta_2 = -1
-                            
+                    
+                    
+                
                 # other features that could be used for data analysis later #
                 gold_earned = match_features['stats']['goldEarned']
                 try:
@@ -212,6 +197,8 @@ def get_data(pid, accountid, watcher):
                 # add data
                 mapping[f'win_g{idx}'] = win
                 mapping[f'kda_g{idx}'] = kda
+                mapping[f'gold_earned_g{idx}'] = gold_earned
+                mapping[f'wards_placed_g{idx}'] = wards_placed 
                 mapping[f'largest_killing_spree_g{idx}'] = largest_killing_spree
                 mapping[f'longest_time_alive_g{idx}'] = longest_time_alive
                 mapping[f'xp_per_min_delta_1_g{idx}'] = xp_per_min_delta_1
@@ -235,14 +222,9 @@ def get_data(pid, accountid, watcher):
         else:
             # we only care about past 5 games. If we reach here, reset
             mapping_list.append(mapping)
-            print ("Finished pulling data")
             return mapping_list
 
     return mapping_list
-          
-  except Exception as e: 
-      print(e)
-      return None
 
 
 # --- Graphs Outputs
@@ -398,7 +380,10 @@ def graph_get_history(summoner):
     return 'Files Saved!'
 
 def graph_kda(df):
-    kda = ggplot(df) + aes(x='games_ago', y='kda') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + ylim(0,30) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('KDA') + ggtitle("KDA Over the Last 5 Games")
+    try:
+      kda = ggplot(df) + aes(x='games_ago', y='kda') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + ylim(0,30) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('KDA') + ggtitle("KDA Over the Last 5 Games")
+    except:
+      pass
     return kda
 
 def graph_tddtc(df):
@@ -421,9 +406,9 @@ def graph_tmk(df):
     tmk = ggplot(df) + aes(x='games_ago', y='totalMinionsKilledPerMinute') + geom_line(color="black", linetype='dashed') + geom_point(aes(color='lane', size=3), show_legend={'size': False}) + scale_x_reverse() + geom_smooth(method = "lm") + xlab('Games Ago') + ylab('Total Minions Killed \n Per Minute') + ggtitle("Total Minions Killed Per Minute \n Over the Last 5 Games")
     return tmk
 
-@api.route('/img/<summoner>')
-def send_img(summoner):
-    return send_from_directory('./static/images', f'{summoner}.jpg') ## need to fix this
+@api.route('/img/<summoner_postfix>')
+def send_img(summoner_postfix):
+    return send_from_directory('./static/images', f'{summoner_postfix}.jpg') ## need to fix this
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
