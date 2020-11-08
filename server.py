@@ -45,7 +45,7 @@ tiltedness = [
               "STOP. You are mega tilted. We predict that you are not about to have a fun time if you queue up again. Consider walking away from the game and doing some exercise to burn off some steam.",
               "Hmm, fortune doesn't favor fools (or the tilted). Today might not be your day, but you'll get 'em next time! Take the rest of the day off and come back to the rift tomorrow!",
               "Ally, enemy, I don't care. . ., they're all tilted! You're tilted so much you can't even be an ally to your own team. Take time off the rift for some much needed sleep",
-              "I wonder what the ducks are plotting today. . . be like Ivern and go enjoy some nature! You're tilt is too high for your games to be productive, so take a long break!"
+              "I wonder what the ducks are plotting today. . . be like Ivern and go enjoy some nature! Your tilt is too high for your games to be productive, so take a long break!"
               ]},
             ]
 
