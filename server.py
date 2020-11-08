@@ -1,4 +1,5 @@
 from flask import Flask, json
+import random
 
 tiltedness = [
             {"id": 1, "name": "Tilt Level One", "tiltedness": 1},
@@ -8,11 +9,17 @@ tiltedness = [
             {"id": 5, "name": "Tilt Level Five", "tiltedness": 5},
             ]
 
+tilt = ["1", "2", "3", "4", "5"]
+
 api = Flask(__name__)
 
-@api.route('/companies', methods=['GET'])
-def get_companies():
-  return json.dumps(companies)
+@api.route('/gettilt', methods=['GET'])
+def get_tiltedness():
+  return random.choice(tilt)
+
+@api.route('/alltilts', methods=['GET'])
+def get_alltilts():
+  return json.dumps(tiltedness)
 
 @api.route('/', methods=['GET'])
 def get_home():
