@@ -2,6 +2,7 @@ from flask import Flask, json, send_from_directory
 from flask_cors import CORS, cross_origin
 import random
 import os
+from os import environ
 
 from riotwatcher import LolWatcher, ApiError
 import numpy as np
@@ -9,10 +10,6 @@ from sklearn.linear_model import LinearRegression
 import pickle
 import datetime
 import pandas as pd
-
-key = 'RGAPI-4bb6a77f-4f91-4629-a761-b70c65ea0605'
-region = 'na1'
-watcher = LolWatcher(key)
 
 # load the model from disk
 model_name = 'model.sav'
@@ -55,6 +52,12 @@ tiltedness = [
 tilt = ["1", "2", "3", "4", "5"]
 
 api = Flask(__name__)
+
+key = os.environ.get('RIOT_API_KEY', None)
+print(key)
+region = 'na1'
+watcher = LolWatcher(key)
+
 cors = CORS(api)
 api.config['CORS_HEADERS'] = 'Content-Type'
 
