@@ -1,6 +1,12 @@
 from flask import Flask, json
 
-companies = [{"id": 1, "name": "Company One"}, {"id": 2, "name": "Company Two"}]
+tiltedness = [
+            {"id": 1, "name": "Tilt Level One", "tiltedness": 1},
+            {"id": 2, "name": "Tilt Level Two", "tiltedness": 2},
+            {"id": 3, "name": "Tilt Level Three", "tiltedness": 3},
+            {"id": 4, "name": "Tilt Level Four", "tiltedness": 4},
+            {"id": 5, "name": "Tilt Level Five", "tiltedness": 5},
+            ]
 
 api = Flask(__name__)
 
